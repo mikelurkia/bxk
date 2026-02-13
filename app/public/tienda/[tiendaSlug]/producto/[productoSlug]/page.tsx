@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 
-import { TiendaPublico } from '@/modules/shops/shop.types';
-import { getTiendaPublicoBySlug } from '@/modules/shops/shop.repository';
-import { getProductoPublicoBySlug } from '@/modules/productos/productos.repository';
+import { getShopPublicBySlug } from '@/modules/shops/shop.repository';
+import { getProductPublicBySlug } from '@/modules/productos/productos.repository';
+import { PublicShop } from '@/modules/shops/shop.schemas';
+import { PublicProduct } from '@/modules/productos/products.schemas';
 
 /**
  * 🔹 Tipos que vienen del server
@@ -32,12 +33,12 @@ export default async function ProductoPublicoPage({params}: Props) {
   
   const { tiendaSlug, productoSlug } = await params;
 
-  const tienda: TiendaPublico | null = await getTiendaPublicoBySlug(tiendaSlug);
-  if (!tienda) notFound();
+  const shop: PublicShop | null = await getShopPublicBySlug(tiendaSlug);
+  if (!shop) notFound();
   
-  const producto: ProductoPublico | null = await getProductoPublicoBySlug( tienda.id, productoSlug);
+  const product: PublicProduct | null = await getProductPublicBySlug( shop.id, productoSlug);
 
-  if (!producto) {
+  if (!product) {
     notFound();
   }
 
@@ -46,12 +47,12 @@ export default async function ProductoPublicoPage({params}: Props) {
       {/* 🔹 Info básica */}
       <header className="space-y-2">
         <h1 className="text-2xl font-bold">
-          {producto.nombre}
+          {product.name}
         </h1>
 
-        {producto.descripcion && (
+        {product.description && (
           <p className="text-muted-foreground">
-            {producto.descripcion}
+            {product.description}
           </p>
         )}
       </header>

@@ -1,13 +1,15 @@
 import { redirect } from 'next/navigation';
 import { ShopUpdateForm } from '@/modules/shops/dashboard/ShopUpdateForm';
 import { getMyShop } from '@/modules/shops/shop.repository';
+import { Shop } from '@/modules/shops/shop.schemas';
 
 export default async function DashboardPage() {
 
-  const tienda = await getMyShop();
-
-  if (!tienda) {
-    redirect('/login');
+  // Obtain vendor shop
+  const shop: Shop | null = await getMyShop();
+  
+  if (!shop) {
+    redirect("" + process.env.NEXT_PUBLIC_URL);
   }
   
   return (
@@ -16,15 +18,15 @@ export default async function DashboardPage() {
       <header>
         <div className="space-y-1">
           <h1 className="text-2xl font-bold">
-            Tu tienda
+            Tu shop
           </h1>
           <p className="text-muted-foreground">
-            Editar datos maestros de tu tienda
+            Editar datos maestros de tu shop
           </p>
         </div>
       </header>
 
-      <ShopUpdateForm shop={tienda} />
+      <ShopUpdateForm shop={shop} />
 
     </div>
   );

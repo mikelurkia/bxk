@@ -1,6 +1,8 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getProductsPublic } from '@/modules/productos/productos.repository';
+import { PublicProduct } from '@/modules/productos/products.schemas';
 import { getShopPublicBySlug } from '@/modules/shops/shop.repository';
+import { PublicShop } from '@/modules/shops/shop.schemas';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -37,22 +39,22 @@ export default async function TiendaPage({ params }: Props) {
   const { tiendaSlug } = await params;
 
   // Obtener datos de la tienda por slug
-  const tienda = await getShopPublicBySlug(tiendaSlug);
-  if (!tienda) notFound();
+  const shop: PublicShop | null = await getShopPublicBySlug(tiendaSlug);
+  if (!shop) notFound();
 
   // Obtener productos públicos de la tienda
-  const productos = await getProductsPublic(tienda.id);
+  const products: PublicProduct[] = await getProductsPublic(shop.id);
 
   // Renderizar la página de la tienda con sus productos
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">
-        {tienda.nombre}
+        {shop.name}
       </h1>
 
-      {tienda.descripcion && (
+      {shop.description && (
         <p className="text-muted-foreground">
-          {tienda.descripcion}
+          {shop.description}
         </p>
       )}
 
@@ -60,23 +62,23 @@ export default async function TiendaPage({ params }: Props) {
         Productos
       </h1>
 
-      {productos?.length === 0 && (
+      {products?.length === 0 && (
         <p className="text-muted-foreground">
           La tienda todavía no ha registrado ningún producto.
         </p>
       )}
 
       <div className="space-y-4">
-        {productos?.map((producto) => (
+        {products?.map((product) => (
           <a
-            key={producto.id}
-            href={`/tienda/${tiendaSlug}/producto/${producto.slug}`}
+            key={product.id}
+            href={`/tienda/${tiendaSlug}/producto/${product.slug}`}
             className="block rounded border p-3"
           >
-            <h3 className="font-medium">{producto.name}</h3>
-            {producto.description && (
+            <h3 className="font-medium">{product.name}</h3>
+            {product.description && (
               <p className="text-sm text-muted-foreground">
-                {producto.description}
+                {product.description}
               </p>
             )}
           </a>

@@ -1,123 +1,142 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import Form from "next/form";
 import { updateMyShopAction } from '@/modules/shops/shop.actions';
-import { initialState, OwnerShop } from '../shop.schemas';
+import { initialState, updateShopSchema, UpdateShop } from '../shop.schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type Props = {
-  shop: OwnerShop
+  shop: UpdateShop
 };
 
 export function ShopUpdateForm({ shop }: Props) {
 
    // Cargamos los datos de la tienda en el estado inicial del formulario
   initialState.inputs = shop;
-  const [state, formAction, pending] = useActionState(updateMyShopAction, initialState);
+  const [state, formAction, isPending] = useActionState(updateMyShopAction, initialState);
+
+  // Hook para el manejo del formulario en el cliente
+  const { register, handleSubmit, setError, formState: { errors, isSubmitting }, reset } = useForm<UpdateShop>({
+    resolver: zodResolver(updateShopSchema),
+    defaultValues: shop,
+    mode: "onChange",
+  });
+
+  // Sincronizar errores del servidor con RHF
+  useEffect(() => {
+
+    console.log("Estate: " + state);
+    if (state?.errors) {
+      console.log("Errores");
+      Object.entries(state.errors).forEach(([field, messages]) => {
+        setError(field as keyof UpdateShop, {
+          type: "server",
+          message: messages?.[0],
+        })
+      })
+    }
+
+    if (state?.success) {
+      console.log("Reset");
+      reset()
+    }
+  }, [state, setError, reset])
 
   return (
 
-    <Form action={formAction} className="space-y-4">
+    <Form action={formAction} className="flex flex-col gap-4">
       
-      <div className="space-y-1">
-        <label className="text-sm font-medium">
-          Nombre
-        </label>
-        <input
-          name="name"
-          defaultValue={state?.inputs?.name ?? ''}
-          required
-          className="w-full rounded border px-3 py-2 text-sm"
+      <div>
+        <Label className="block text-sm mb-2">Nombre de la tienda</Label>
+        <Input
+          {...register("name")} 
+          name="name" // Importante: debe coincidir con el name de la Action
+          className="border p-2 w-full text-black" 
         />
+        {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+
       </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">
-          Descripción
-        </label>
-        <textarea
+      <div>
+        <Label className="block text-sm mb-2">Descripción</Label>
+        <Textarea 
+          {...register("description")} 
           name="description"
-          defaultValue={state?.inputs?.description ?? ''}
-          rows={10}
-          className="w-full rounded border px-3 py-2 text-sm"
+          className="border p-2 w-full text-black" 
         />
+        {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
       </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">
-          Dirección
-        </label>
-        <input
-          name="address"
-          defaultValue={state?.inputs?.address ?? ''}
-          className="w-full rounded border px-3 py-2 text-sm"
+      <div>
+        <Label className="block text-sm mb-2">Dirección</Label>
+        <Input
+          {...register("address")} 
+          name="address" // Importante: debe coincidir con el name de la Action
+          className="border p-2 w-full text-black" 
         />
+        {errors.address && <p className="text-red-500 text-xs">{errors.address.message}</p>}
+
       </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">
-          Teléfono
-        </label>
-        <input
-          name="phone"
-          defaultValue={state?.inputs?.phone ?? ''}
-          className="w-full rounded border px-3 py-2 text-sm"
+      <div>
+        <Label className="block text-sm mb-2">Teléfono</Label>
+        <Input
+          {...register("phone")} 
+          name="phone" // Importante: debe coincidir con el name de la Action
+          className="border p-2 w-full text-black" 
         />
+        {errors.phone && <p className="text-red-500 text-xs">{errors.phone.message}</p>}
       </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">
-          WhatsApp
-        </label>
-        <input
-          name="whatsapp"
-          defaultValue={state?.inputs?.whatsapp ?? ''}
-          className="w-full rounded border px-3 py-2 text-sm"
+      <div>
+        <Label className="block text-sm mb-2">Whatsapp</Label>
+        <Input
+          {...register("whatsapp")} 
+          name="whatsapp" // Importante: debe coincidir con el name de la Action
+          className="border p-2 w-full text-black" 
         />
+        {errors.whatsapp && <p className="text-red-500 text-xs">{errors.whatsapp.message}</p>}
       </div>
 
-      <div className="space-y-1">
-        <label className="text-sm font-medium">
-          Instagram
-        </label>
-        <input
-          name="instagram"
-          defaultValue={state?.inputs?.instagram ?? ''}
-          className="w-full rounded border px-3 py-2 text-sm"
+      <div>
+        <Label className="block text-sm mb-2">Instagram</Label>
+        <Input
+          {...register("instagram")} 
+          name="instagram" // Importante: debe coincidir con el name de la Action
+          className="border p-2 w-full text-black" 
         />
+        {errors.instagram && <p className="text-red-500 text-xs">{errors.instagram.message}</p>}
       </div>
 
-      {state?.inputs?.active !== undefined && (        
-      <div className="flex items-center gap-2">
+      <div>
+        <Label className="block text-sm mb-2">Tienda activa</Label>
         <input
           type="checkbox"
-          name="active"
-          defaultChecked={state?.inputs?.active ?? true}
+          {...register("active")} 
+          name="active" // Importante: debe coincidir con el name de la Action
         />
-        <label className="text-sm">
-          Tienda activa
-        </label>
+        {errors.active && <p className="text-red-500 text-xs">{errors.active.message}</p>}
       </div>
-      )}
 
-      {state?.errors && (
-        <div className="text-sm text-red-600">
-          {Object.entries(state.errors).map(([key, errors]) => (
-            <p key={key}>{errors.join(', ')}</p>
-          ))}
-        </div>
-      )}
+      {/* Mensajes del Servidor */}
+      {state?.errors && <p className="text-sm text-orange-600 my-2">{Object.entries(state.errors).map(([key, errors]) => (<p key={key}>{errors.join(', ')}</p>))}</p>}
+      {state?.success && <p className="text-sm text-green-600 my-2">{state.message}</p>}
 
-      {state?.success && (
-        <p className="text-sm text-green-600">
-          Tienda actualizada correctamente
-        </p>
-      )}
+      <Button type="submit" variant={'default'}  disabled={isPending}>
+        {isPending ? "Guardando..." : "Guardar datos"}
+      </Button>
 
-      <SubmitButton />
     </Form>
   );
+
 }
 
 function SubmitButton() {

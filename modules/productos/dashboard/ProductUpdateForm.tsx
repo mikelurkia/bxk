@@ -4,12 +4,12 @@ import { updateProductAction } from '../products.actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useActionState } from 'react';
-import { initialState, OwnerProduct } from '../products.schemas';
+import { initialState, Product } from '../products.schemas';
 import { useFormStatus } from 'react-dom';
 import Form from 'next/form';
 
 type Props = {
-  product: OwnerProduct;
+  product: Product;
 };
 
 export function ProductUpdateForm({ product }: Props) {

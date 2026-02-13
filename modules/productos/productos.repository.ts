@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { OwnerProduct, PublicProduct } from './products.schemas';
+import { Product, PublicProduct } from './products.schemas';
 
-export async function getProductsDashboard(shopId: string): Promise<OwnerProduct[]> {
+export async function getProductsDashboard(shopId: string): Promise<Product[]> {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
@@ -18,10 +18,10 @@ export async function getProductsDashboard(shopId: string): Promise<OwnerProduct
 
   if (error) throw error;
 
-  return data as OwnerProduct[] ?? [];
+  return data as Product[] ?? [];
 }
 
-export async function getProductDashboardBySlug(shopId: string, productSlug: string): Promise<OwnerProduct | null> {
+export async function getProductDashboardBySlug(shopId: string, productSlug: string): Promise<Product | null> {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
@@ -40,10 +40,10 @@ export async function getProductDashboardBySlug(shopId: string, productSlug: str
 
   if (error) throw error;
 
-  return data as OwnerProduct;
+  return data as Product;
 }  
 
-export async function getProductDashboardById(productoId: string): Promise<OwnerProduct | null> {
+export async function getProductDashboardById(productoId: string): Promise<Product | null> {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
@@ -56,7 +56,7 @@ export async function getProductDashboardById(productoId: string): Promise<Owner
 
   if (error) throw error;
 
-  return data as OwnerProduct;
+  return data as Product;
 }
 
 export async function getProductsPublic(tiendaId: string): Promise<PublicProduct[]> {

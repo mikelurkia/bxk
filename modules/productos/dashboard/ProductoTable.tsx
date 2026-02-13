@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Edit, Edit2, Edit3, Trash2 } from 'lucide-react';
 
 export function ProductoTable({
-  productos,
+  products,
 }: {
-  productos: Product[];
+  products: Product[];
 }) {
   return (
     <Table>
@@ -21,7 +21,7 @@ export function ProductoTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {productos.map((p) => (
+        {products.map((p) => (
           <TableRow key={p.id}>
             <TableCell>{p.name}</TableCell>
             <TableCell>{p.slug}</TableCell>

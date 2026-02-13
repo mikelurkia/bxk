@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ProductoTable } from '@/modules/productos/dashboard/ProductoTable';
 import { getMyShop } from '@/modules/shops/shop.repository';
 import { getProductsDashboard } from '@/modules/productos/productos.repository';
-import { OwnerProduct } from '@/modules/productos/products.schemas';
+import { Product } from '@/modules/productos/products.schemas';
 import { ProductoCreateSheet } from '@/modules/productos/dashboard/ProductoCreateSheet';
 
 export default async function ProductosPage() {
@@ -12,7 +12,7 @@ export default async function ProductosPage() {
   if (!shop) notFound()
 
   // Cargar productos (RLS ya filtra por tienda)
-  const productos: OwnerProduct[] = await getProductsDashboard(shop.id);
+  const products: Product[] = await getProductsDashboard(shop.id);
   
   return (
     <div className="space-y-6">
@@ -33,7 +33,7 @@ export default async function ProductosPage() {
 
       {/* Listado */}
       <section className="space-y-2">
-        <ProductoTable productos={productos} />
+        <ProductoTable products={products} />
       </section>
     </div>
   );
