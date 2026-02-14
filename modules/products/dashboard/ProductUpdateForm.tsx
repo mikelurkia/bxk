@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useServerFormAction } from '@/hooks/useServerFormAction';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Checkbox } from '@/components/ui/checkbox';
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 
 export function ProductUpdateForm({ product }: Props) {
 
-  const { register, setError, formState: { errors }, reset } = useForm<UpdateProduct>({
+  const { register, setError, formState: { errors }, reset, control } = useForm<UpdateProduct>({
     resolver: zodResolver(updateProductSchema),
     defaultValues: product,
     mode: 'onChange',
@@ -65,14 +65,22 @@ export function ProductUpdateForm({ product }: Props) {
         {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
       </div>
 
-      <div>
-        <Label className="block text-sm mb-2">¿Producto activo?</Label>
-        <Checkbox 
-          id='active'
-          {...register("active")} 
+      <div className="flex items-center gap-2">
+        <Controller
           name="active"
-          defaultChecked={product.active}
+          control={control}
+          render={({ field }) => (
+            <Checkbox
+              id="active"
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              name={field.name}
+            />
+          )}
         />
+        <Label htmlFor="active" className="text-sm font-normal cursor-pointer">
+          ¿Producto activo?
+        </Label>
         {errors.active && <p className="text-red-500 text-xs">{errors.active.message}</p>}
       </div>
 

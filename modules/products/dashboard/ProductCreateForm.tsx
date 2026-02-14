@@ -10,11 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export function ProductCreateForm() {
 
-  const { register, handleSubmit, setError, formState: { errors }, reset } = useForm<CreateProduct>({
+  const { register, handleSubmit, setError, formState: { errors }, reset, control } = useForm<CreateProduct>({
     resolver: zodResolver(createProductSchema),
     mode: 'onChange',
   });
@@ -51,6 +52,25 @@ export function ProductCreateForm() {
           className="border p-2 w-full text-black" 
         />
         {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Controller
+          name="active"
+          control={control}
+          render={({ field }) => (
+            <Checkbox
+              id="active"
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              name={field.name}
+            />
+          )}
+        />
+        <Label htmlFor="active" className="text-sm font-normal cursor-pointer">
+          ¿Producto activo?
+        </Label>
+        {errors.active && <p className="text-red-500 text-xs">{errors.active.message}</p>}
       </div>
 
       {/* Mensajes del Servidor */}

@@ -47,6 +47,7 @@ export const initialCreateState: CreateFormState = {
   errors: undefined,
   inputs: {
     name: '',
+    zone_id: '',
     slug: '',
     description: '',
     address: '',
@@ -63,6 +64,7 @@ export const initialUpdateState: UpdateFormState = {
   errors: undefined,
   inputs: {
     id: '',
+    zone_id: '',
     name: '',
     slug: '',
     description: '',
