@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,14 +26,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning >
       <body className="min-h-screen bg-background text-foreground flex flex-col">
-        <Header/>
-        Public
-        <main className="mx-auto p-4 flex-1 flex-grow gap-6 w-full max-w-5xl">
-          {children}
-        </main>
-        <Footer/>
+        <ThemeProvider  attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Header/>
+          <main className="mx-auto p-4 flex-1 flex-grow gap-6 w-full max-w-5xl">
+            {children}
+          </main>
+          <Footer/>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { ServerFormState } from '@/hooks/useServerFormAction';
 
 export const authSchema = z.object({
   email: z.email({ message: "Introduce un email válido." }).nonempty({ message: "El email es obligatorio." }),
@@ -6,14 +7,7 @@ export const authSchema = z.object({
 });
 
 export type AuthInput = z.infer<typeof authSchema>;
-
-// Tipo para el estado del formulario
-export type FormState = {
-  success: boolean;
-  message: string;
-  errors?: Record<string, string[]>;
-  inputs?: AuthInput;
-};
+export type FormState = ServerFormState<AuthInput>;
 
 export const initialState: FormState = {
   success: false,

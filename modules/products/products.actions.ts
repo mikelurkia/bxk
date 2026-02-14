@@ -3,10 +3,10 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
-import { getProductPublicBySlug } from './productos.repository';
-import { createProductSchema, updateProductSchema, FormState } from './products.schemas';
+import { getProductDashboardById, getProductPublicBySlug } from './products.repository';
+import { createProductSchema, updateProductSchema, CreateFormState, UpdateFormState, Product } from './products.schemas';
 
-export async function createProductAction(_: any, formData: FormData): Promise<FormState> {
+export async function createProductAction(_: any, formData: FormData): Promise<CreateFormState> {
   
   const supabase = await createSupabaseServerClient();
 
@@ -97,7 +97,7 @@ export async function createProductAction(_: any, formData: FormData): Promise<F
   };
 }
 
-export async function updateProductAction(_: any, formData: FormData): Promise<FormState> {
+export async function updateProductAction(_: any, formData: FormData): Promise<UpdateFormState> {
 
   const supabase = await createSupabaseServerClient();
 
@@ -143,14 +143,14 @@ export async function updateProductAction(_: any, formData: FormData): Promise<F
     throw new Error('No se ha podido actualizar el producto');
   }
 
-  // Refrescamos dashboard
-  revalidatePath('/dashboard');
+  // Obtener los datos actualizados del servidor
+  const updatedProduct = await getProductDashboardById(validatedFields.data.id);
 
   return {
     success: true,
     message: "Producto actualizado correctamente",
     errors: undefined,
-    inputs: rawData as any, // Devolvemos lo que escribió el usuario
+    inputs: updatedProduct as Product, // Devolvemos lo que escribió el usuario
   };
   
 }

@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { getProductsPublic } from '@/modules/productos/productos.repository';
-import { PublicProduct } from '@/modules/productos/products.schemas';
+import { getProductsPublic } from '@/modules/products/products.repository';
+import { PublicProduct } from '@/modules/products/products.schemas';
 import { getShopPublicBySlug } from '@/modules/shops/shop.repository';
 import { PublicShop } from '@/modules/shops/shop.schemas';
 import { Metadata } from 'next';
@@ -70,11 +70,7 @@ export default async function TiendaPage({ params }: Props) {
 
       <div className="space-y-4">
         {products?.map((product) => (
-          <a
-            key={product.id}
-            href={`/tienda/${tiendaSlug}/producto/${product.slug}`}
-            className="block rounded border p-3"
-          >
+          <a key={product.id} href={`/tienda/${tiendaSlug}/producto/${product.slug}`} className="block rounded border p-3">
             <h3 className="font-medium">{product.name}</h3>
             {product.description && (
               <p className="text-sm text-muted-foreground">

@@ -1,10 +1,9 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
-import { useActionState, useEffect } from 'react';
 import Form from "next/form";
 import { updateMyShopAction } from '@/modules/shops/shop.actions';
-import { initialState, updateShopSchema, UpdateShop } from '../shop.schemas';
+import { updateShopSchema, UpdateShop, initialUpdateState } from '../shop.schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
@@ -12,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useServerFormAction } from '@/hooks/useServerFormAction';
 
 type Props = {
   shop: UpdateShop
@@ -19,36 +19,24 @@ type Props = {
 
 export function ShopUpdateForm({ shop }: Props) {
 
-   // Cargamos los datos de la tienda en el estado inicial del formulario
-  initialState.inputs = shop;
-  const [state, formAction, isPending] = useActionState(updateMyShopAction, initialState);
-
-  // Hook para el manejo del formulario en el cliente
-  const { register, handleSubmit, setError, formState: { errors, isSubmitting }, reset } = useForm<UpdateShop>({
-    resolver: zodResolver(updateShopSchema),
-    defaultValues: shop,
-    mode: "onChange",
-  });
-
-  // Sincronizar errores del servidor con RHF
-  useEffect(() => {
-
-    console.log("Estate: " + state);
-    if (state?.errors) {
-      console.log("Errores");
-      Object.entries(state.errors).forEach(([field, messages]) => {
-        setError(field as keyof UpdateShop, {
-          type: "server",
-          message: messages?.[0],
-        })
-      })
-    }
-
-    if (state?.success) {
-      console.log("Reset");
-      reset()
-    }
-  }, [state, setError, reset])
+  const { register, handleSubmit, setError, formState: { errors }, reset } = useForm<UpdateShop>({
+      resolver: zodResolver(updateShopSchema),
+      defaultValues: shop,
+      mode: 'onChange',
+    });
+  
+    const {state, formAction, isPending, syncServerErrors } = useServerFormAction(
+      updateMyShopAction,
+      initialUpdateState,
+      () => {
+        if (state?.inputs) {
+          reset(state.inputs as UpdateShop)
+        }
+      }
+    );
+  
+    // Sincroniza errores del servidor
+    syncServerErrors(setError);
 
   return (
 
@@ -59,7 +47,7 @@ export function ShopUpdateForm({ shop }: Props) {
         <Input
           {...register("name")} 
           name="name" // Importante: debe coincidir con el name de la Action
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
 
@@ -70,7 +58,7 @@ export function ShopUpdateForm({ shop }: Props) {
         <Textarea 
           {...register("description")} 
           name="description"
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
       </div>
@@ -80,7 +68,7 @@ export function ShopUpdateForm({ shop }: Props) {
         <Input
           {...register("address")} 
           name="address" // Importante: debe coincidir con el name de la Action
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.address && <p className="text-red-500 text-xs">{errors.address.message}</p>}
 
@@ -91,7 +79,7 @@ export function ShopUpdateForm({ shop }: Props) {
         <Input
           {...register("phone")} 
           name="phone" // Importante: debe coincidir con el name de la Action
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.phone && <p className="text-red-500 text-xs">{errors.phone.message}</p>}
       </div>
@@ -101,7 +89,7 @@ export function ShopUpdateForm({ shop }: Props) {
         <Input
           {...register("whatsapp")} 
           name="whatsapp" // Importante: debe coincidir con el name de la Action
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.whatsapp && <p className="text-red-500 text-xs">{errors.whatsapp.message}</p>}
       </div>
@@ -111,7 +99,7 @@ export function ShopUpdateForm({ shop }: Props) {
         <Input
           {...register("instagram")} 
           name="instagram" // Importante: debe coincidir con el name de la Action
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.instagram && <p className="text-red-500 text-xs">{errors.instagram.message}</p>}
       </div>

@@ -1,3 +1,4 @@
+import { ServerFormState } from '@/hooks/useServerFormAction';
 import * as z from 'zod';
 
 export const productSchema = z.object({
@@ -21,16 +22,24 @@ export const updateProductSchema = productSchema.omit({
 export type Product       = z.infer<typeof productSchema>;
 export type PublicProduct = z.infer<typeof publicProductSchema>;
 export type CreateProduct = z.infer<typeof createProductSchema>;
+export type UpdateProduct = z.infer<typeof updateProductSchema>;
 
-// Tipo para el estado del formulario
-export type FormState = {
-  success: boolean;
-  message: string;
-  errors?: Record<string, string[]>;
-  inputs?: Product;
-};
+export type CreateFormState = ServerFormState<CreateProduct>;
+export type UpdateFormState = ServerFormState<UpdateProduct>;
 
-export const initialState: FormState = {
+export const initialCreateState: CreateFormState = {
+  success: false,
+  message: '',
+  errors: undefined,
+  inputs: {
+    name: '',
+    description: '',
+    active: true,
+    slug: '',
+  },
+}
+
+export const initialUpdateState: UpdateFormState = {
   success: false,
   message: '',
   errors: undefined,

@@ -1,7 +1,8 @@
 import { getSession } from "@/modules/auth/auth.repository";
 import LogoutButton from "@/modules/auth/LogoutButton";
 import { Button } from "./ui/button";
-import { KeyRound, MessageCircleDashed, MessageCircleQuestionMark } from "lucide-react";
+import { KeyRound, MessageCircleQuestionMark } from "lucide-react";
+import { ThemeSwitcher } from "./theme-switcher";
 
 
 export default async function Header() {
@@ -9,7 +10,7 @@ export default async function Header() {
   const session = await getSession();
   
   return (
-    <header className="bg-white shadow p-4 mb-6 flex items-center justify-between">
+    <header className="bg-card shadow p-4 mb-6 flex items-center justify-between">
 
       <div className="flex items-baseline space-x-4">
         <a href={process.env.NEXT_PUBLIC_URL}><h1 className="flex items-center text-2xl font-bold"><MessageCircleQuestionMark className="mr-2 h-6 w-6" />bxk</h1></a>
@@ -23,6 +24,7 @@ export default async function Header() {
           </Button>
         </a>
         {session && <LogoutButton/>}
+        <ThemeSwitcher/>
       </div>
 
     </header>

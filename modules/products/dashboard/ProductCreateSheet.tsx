@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader,SheetTitle,SheetTrigger, } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ProductoCreateForm } from '@/modules/productos/dashboard/ProductoCreateForm';
+import { ProductCreateForm } from '@/modules/products/dashboard/ProductCreateForm';
 
-export function ProductoCreateSheet({
+export function ProductCreateSheet({
   children,
 }: {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export function ProductoCreateSheet({
         <SheetHeader>
           <SheetTitle>Nuevo producto</SheetTitle>
         </SheetHeader>
-        <ProductoCreateForm />
+        <ProductCreateForm />
       </SheetContent>
     </Sheet>
   );

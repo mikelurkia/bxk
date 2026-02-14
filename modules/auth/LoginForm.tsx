@@ -1,15 +1,32 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
-import { useActionState } from 'react'
 import { loginAction } from '@/modules/auth/auth.actions'
-import { initialState } from '@/modules/auth/auth.schemas'
+import { AuthInput, authSchema, initialState } from '@/modules/auth/auth.schemas'
 import Form from 'next/form'
 import { useFormStatus } from 'react-dom'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { useServerFormAction } from '@/hooks/useServerFormAction'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
 export default function LoginForm() {
 
-  const [state, formAction] = useActionState(loginAction, initialState);
+  const { register, handleSubmit, setError, formState: { errors }, reset } = useForm<AuthInput>({
+    resolver: zodResolver(authSchema),
+    mode: 'onChange',
+  });
+
+  const {state, formAction, isPending, syncServerErrors } = useServerFormAction(
+    loginAction,
+    initialState,
+    () => reset() // Se ejecuta cuando el servidor responde success: true
+  );
+
+  // Sincroniza errores del servidor
+  syncServerErrors(setError);
+
 
   return (
     
@@ -26,29 +43,32 @@ export default function LoginForm() {
 
         <Form action={formAction} className="space-y-4">
           
+                <div>
+        <Label className="block text-sm mb-2">Nombre de la tienda</Label>
+        
+
+      </div>
+
           <div className="space-y-1">
-            <label className="text-sm font-medium">
-              Email
-            </label>
-            <input
-              type='email'
+            <Label className="text-sm font-medium">Email</Label>
+            <Input
+              {...register("email")} 
               name="email"
-              defaultValue={state?.inputs?.email ?? ''}
-              required
-              className="w-full rounded border px-3 py-2 my-2 text-sm"
+              className="border p-2 w-full" 
             />
+            {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium">
+            <Label className="text-sm font-medium">
               Contraseña
-            </label>
-            <input
+            </Label>
+            <Input
+              {...register("password")} 
               type="password"
               name="password"
-              defaultValue={state?.inputs?.password ?? ''}
-              required
-              className="w-full rounded border px-3 py-2 my-2 text-sm"
+              className="border p-2 w-full" 
             />
+            {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
           </div>
 
           {state?.errors && (

@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 
 import { getShopPublicBySlug } from '@/modules/shops/shop.repository';
-import { getProductPublicBySlug } from '@/modules/productos/productos.repository';
+import { getProductPublicBySlug } from '@/modules/products/products.repository';
 import { PublicShop } from '@/modules/shops/shop.schemas';
-import { PublicProduct } from '@/modules/productos/products.schemas';
+import { PublicProduct } from '@/modules/products/products.schemas';
 
 /**
  * 🔹 Tipos que vienen del server

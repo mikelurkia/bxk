@@ -3,9 +3,9 @@ import { Product } from '../products.schemas';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@/components/ui/table';
 import { ProductDeleteDialog } from './ProductDeleteDialog';
 import { Button } from '@/components/ui/button';
-import { Edit, Edit2, Edit3, Trash2 } from 'lucide-react';
+import { Edit } from 'lucide-react';
 
-export function ProductoTable({
+export function ProductTable({
   products,
 }: {
   products: Product[];
@@ -16,7 +16,7 @@ export function ProductoTable({
         <TableRow>
           <TableHead>Nombre</TableHead>
           <TableHead>Slug</TableHead>
-          <TableHead>Estado</TableHead>
+          <TableHead>Público</TableHead>
           <TableHead>Acciones</TableHead>
         </TableRow>
       </TableHeader>
@@ -26,10 +26,10 @@ export function ProductoTable({
             <TableCell>{p.name}</TableCell>
             <TableCell>{p.slug}</TableCell>
             <TableCell>
-              <Checkbox checked={p.active} />
+              {p.active ? <p>Activo</p> : <p className="text-red-500 font-bold">Inactivo</p>}
             </TableCell>
             <TableCell>
-              <a key={p.id} href={`/productos/${p.id}/`} className="text-blue-600">
+              <a key={p.id} href={`/products/${p.id}/`} className="text-blue-600">
               <Button variant="ghost" size="icon" className="hover:text-blue-600 hover:bg-primary/10">
                 <Edit className="h-4 w-4" />
               </Button>

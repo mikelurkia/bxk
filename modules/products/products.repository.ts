@@ -69,7 +69,7 @@ export async function getProductsPublic(tiendaId: string): Promise<PublicProduct
       description,
       slug
     `)
-    .eq('tienda_id', tiendaId);
+    .eq('shop_id', tiendaId);
 
   if (error) throw error;
 

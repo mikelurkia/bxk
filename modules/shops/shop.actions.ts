@@ -4,9 +4,9 @@ import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getMyShop } from './shop.repository';
-import { updateShopSchema, FormState } from './shop.schemas';
+import { updateShopSchema, UpdateFormState } from './shop.schemas';
 
-export async function updateMyShopAction(_: any, formData: FormData): Promise<FormState> {
+export async function updateMyShopAction(_: any, formData: FormData): Promise<UpdateFormState> {
 
   const supabase = await createSupabaseServerClient();
 
@@ -61,14 +61,14 @@ export async function updateMyShopAction(_: any, formData: FormData): Promise<Fo
     throw new Error('No se ha podido actualizar la tienda');
   }
 
-  // 🔄 Refrescamos dashboard
-  revalidatePath('/dashboard');
+    // ✅ NUEVO: Obtener los datos actualizados del servidor
+  const updatedShop = await getMyShop();
 
   return {
     success: true,
     message: "Tienda actualizada correctamente",
     errors: undefined,
-    inputs: rawData as any, // Devolvemos lo que escribió el usuario
+    inputs: updatedShop as any, // Devolvemos lo que escribió el usuario
   };
   
 }

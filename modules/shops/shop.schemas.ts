@@ -1,3 +1,5 @@
+import { ServerFormState } from '@/hooks/useServerFormAction';
+import { Update } from 'next/dist/build/swc/types';
 import * as z from 'zod';
 
 export const shopSchema = z.object({
@@ -33,21 +35,34 @@ export const updateShopSchema = shopSchema.partial({
 
 export type Shop = z.infer<typeof shopSchema>;
 export type PublicShop = z.infer<typeof publicShopSchema>;
+export type CreateShop = z.infer<typeof createShopSchema>;
 export type UpdateShop = z.infer<typeof updateShopSchema>;
 
-// Tipo para el estado del formulario
-export type FormState = {
-  success: boolean;
-  message: string;
-  errors?: Record<string, string[]>;
-  inputs?: UpdateShop;
-};
+export type UpdateFormState = ServerFormState<UpdateShop>;
+export type CreateFormState = ServerFormState<CreateShop>;
 
-export const initialState: FormState = {
+export const initialCreateState: CreateFormState = {
   success: false,
   message: '',
   errors: undefined,
   inputs: {
+    name: '',
+    slug: '',
+    description: '',
+    address: '',
+    phone: '',
+    whatsapp: '',
+    instagram: '',
+    active: true,
+  },
+}
+
+export const initialUpdateState: UpdateFormState = {
+  success: false,
+  message: '',
+  errors: undefined,
+  inputs: {
+    id: '',
     name: '',
     slug: '',
     description: '',

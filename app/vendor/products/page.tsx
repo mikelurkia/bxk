@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { ProductoTable } from '@/modules/productos/dashboard/ProductoTable';
+import { ProductTable } from '@/modules/products/dashboard/ProductTable';
 import { getMyShop } from '@/modules/shops/shop.repository';
-import { getProductsDashboard } from '@/modules/productos/productos.repository';
-import { Product } from '@/modules/productos/products.schemas';
-import { ProductoCreateSheet } from '@/modules/productos/dashboard/ProductoCreateSheet';
+import { getProductsDashboard } from '@/modules/products/products.repository';
+import { Product } from '@/modules/products/products.schemas';
+import { ProductCreateSheet } from '@/modules/products/dashboard/ProductCreateSheet';
 
 export default async function ProductosPage() {
 
@@ -25,15 +25,15 @@ export default async function ProductosPage() {
           </p>
         </div>
 
-        <ProductoCreateSheet>
+        <ProductCreateSheet>
           <Button>Nuevo producto</Button>
-        </ProductoCreateSheet>
+        </ProductCreateSheet>
 
       </div>
 
       {/* Listado */}
       <section className="space-y-2">
-        <ProductoTable products={products} />
+        <ProductTable products={products} />
       </section>
     </div>
   );

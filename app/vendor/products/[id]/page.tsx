@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 
-import { getProductDashboardById } from '@/modules/productos/productos.repository';
+import { getProductDashboardById } from '@/modules/products/products.repository';
 
-import { ProductoDatosCard } from '@/modules/productos/dashboard/ProductoDatosCard';
-import { ProductUpdateForm } from '@/modules/productos/dashboard/ProductUpdateForm';
+import { ProductDatosCard } from '@/modules/products/dashboard/ProductDatosCard';
+import { ProductUpdateForm } from '@/modules/products/dashboard/ProductUpdateForm';
 
 type Props = {
   params: {
@@ -37,9 +37,9 @@ export default async function ProductoPage({ params, }: Props) {
       {/* Layout principal */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Columna izquierda */}
-        <ProductoDatosCard>
+        <ProductDatosCard>
           <ProductUpdateForm product={product} />
-        </ProductoDatosCard>
+        </ProductDatosCard>
 
         {/* Columna derecha */}
         <div className="lg:col-span-1">

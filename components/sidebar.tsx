@@ -6,10 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getMyPerfil, getMyUser, getSession } from "@/modules/auth/auth.repository";
 import { getMyShop } from "@/modules/shops/shop.repository";
 import LogoutButton from "@/modules/auth/LogoutButton";
+import { ThemeSwitcher } from "./theme-switcher";
 
 const navItems = [
   { label: "Dashboard", icon: Home, href: "/" },
-  { label: "Productos", icon: Package, href: "/productos" },
+  { label: "Productos", icon: Package, href: "/products" },
   { label: "Tienda", icon: Settings, href: "/tienda" },
 ];
 
@@ -22,8 +23,9 @@ export async function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-card">
       {/* Header / Logo */}
-      <div className="p-6">
+      <div className="p-6 flex space-x-4">
         <h2 className="text-xl font-bold tracking-tight">{tienda?.name}</h2>
+        <ThemeSwitcher/>
       </div>
 
       {/* Navegación Principal */}

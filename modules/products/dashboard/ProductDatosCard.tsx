@@ -6,7 +6,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 
-export function ProductoDatosCard({
+export function ProductDatosCard({
   children,
 }: {
   children: React.ReactNode;
