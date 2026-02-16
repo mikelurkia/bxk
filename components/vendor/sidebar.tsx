@@ -1,12 +1,12 @@
 // components/sidebar.tsx
-import { Home, Package, ShoppingCart, Settings, User } from "lucide-react";
+import { Home, Package, ShoppingCart, Settings, User, Infinity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getMyPerfil, getMyUser, getSession } from "@/modules/auth/auth.repository";
 import { getMyShop } from "@/modules/shops/shop.repository";
 import LogoutButton from "@/modules/auth/LogoutButton";
-import { ThemeSwitcher } from "./theme-switcher";
+import { ThemeSwitcher } from "../theme-switcher";
 
 const navItems = [
   { label: "Dashboard", icon: Home, href: "/" },
@@ -23,13 +23,13 @@ export async function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-card">
       {/* Header / Logo */}
-      <div className="p-6 flex space-x-4">
+      <div className="p-4 flex items-center space-x-4">
+        <Infinity className="h-6 w-6" />
         <h2 className="text-xl font-bold tracking-tight">{tienda?.name}</h2>
-        <ThemeSwitcher/>
       </div>
 
       {/* Navegación Principal */}
-      <nav className="flex-1 space-y-1 px-3">
+      <nav className="flex-1 space-y-1 px-1">
         {navItems.map((item) => (
           <a href={item.href} key={item.label}>
             <Button
@@ -46,7 +46,6 @@ export async function Sidebar() {
 
       {/* Perfil del Vendedor (Anclado al fondo) */}
       <div className="mt-auto border-t p-4">
-        
 
         <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors cursor-pointer">
           <Avatar className="h-9 w-9">
