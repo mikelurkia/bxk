@@ -29,7 +29,7 @@ export function ProductTable({
               {p.active ? <p>Activo</p> : <p className="text-red-500 font-bold">Inactivo</p>}
             </TableCell>
             <TableCell>
-              <a key={p.id} href={`/products/${p.id}/`} className="text-blue-600">
+              <a key={p.id} href={`/productos/${p.id}/`} className="text-blue-600">
               <Button variant="ghost" size="icon" className="hover:text-blue-600 hover:bg-primary/10">
                 <Edit className="h-4 w-4" />
               </Button>

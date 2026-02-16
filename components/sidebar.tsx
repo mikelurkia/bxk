@@ -10,7 +10,7 @@ import { ThemeSwitcher } from "./theme-switcher";
 
 const navItems = [
   { label: "Dashboard", icon: Home, href: "/" },
-  { label: "Productos", icon: Package, href: "/products" },
+  { label: "Productos", icon: Package, href: "/productos" },
   { label: "Tienda", icon: Settings, href: "/tienda" },
 ];
 
