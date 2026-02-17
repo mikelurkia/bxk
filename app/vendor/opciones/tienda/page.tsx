@@ -15,19 +15,11 @@ export default async function DashboardPage() {
   return (
 
     <div className="space-y-6">
-      <header>
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold">
-            Tu shop
-          </h1>
-          <p className="text-muted-foreground">
-            Editar datos maestros de tu shop
-          </p>
-        </div>
-      </header>
-
+      <div className="flex-none">
+        <h3 className="text-lg font-medium">Tienda</h3>
+        <p className="text-muted-foreground text-sm">Datos de tu tienda.</p>
+      </div>
       <ShopUpdateForm shop={shop} />
-
     </div>
   );
 }

@@ -11,7 +11,7 @@ import { ThemeSwitcher } from "../theme-switcher";
 const navItems = [
   { label: "Dashboard", icon: Home, href: "/" },
   { label: "Productos", icon: Package, href: "/productos" },
-  { label: "Tienda", icon: Settings, href: "/tienda" },
+  { label: "Opciones",  icon: Settings, href: "/opciones/tienda" },
 ];
 
 export async function Sidebar() {
@@ -21,7 +21,7 @@ export async function Sidebar() {
   const tienda  = await getMyShop();
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-card">
+    <div className="flex h-screen w-64 flex-col border-r">
       {/* Header / Logo */}
       <div className="p-4 flex items-center space-x-4">
         <Infinity className="h-6 w-6" />
@@ -45,7 +45,18 @@ export async function Sidebar() {
       </nav>
 
       {/* Perfil del Vendedor (Anclado al fondo) */}
-      <div className="mt-auto border-t p-4">
+      <div className="mt-auto p-2">
+
+        <div className="space-x-3 flex items-center my-2">
+          {tienda && 
+            <a href={process.env.NEXT_PUBLIC_URL}>
+              <Button variant="outline" size="sm">
+                Portal público
+              </Button>
+            </a>
+          }
+          {session && <LogoutButton/>}
+        </div>
 
         <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors cursor-pointer">
           <Avatar className="h-9 w-9">
@@ -56,16 +67,6 @@ export async function Sidebar() {
             <span className="text-sm font-medium leading-none">{tienda?.name}</span>
             <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
           </div>
-        </div>
-        <div className="space-x-3 flex items-center my-2">
-          {tienda && 
-            <a href={process.env.NEXT_PUBLIC_URL}>
-              <Button variant="outline" size="sm">
-                Portal público
-              </Button>
-            </a>
-          }
-          {session && <LogoutButton/>}
         </div>
       </div>
     </div>

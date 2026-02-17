@@ -118,9 +118,11 @@ export function ShopUpdateForm({ shop }: Props) {
       {state?.errors && <p className="text-sm text-orange-600 my-2">{Object.entries(state.errors).map(([key, errors]) => (<p key={key}>{errors.join(', ')}</p>))}</p>}
       {state?.success && <p className="text-sm text-green-600 my-2">{state.message}</p>}
 
-      <Button type="submit" variant={'default'}  disabled={isPending}>
-        {isPending ? "Guardando..." : "Guardar datos"}
-      </Button>
+      <div>
+        <Button type="submit" variant={'default'}  disabled={isPending}>
+          {isPending ? "Guardando..." : "Guardar cambios"}
+        </Button>
+      </div>
 
     </Form>
   );

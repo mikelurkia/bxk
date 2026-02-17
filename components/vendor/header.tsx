@@ -10,7 +10,7 @@ export default async function Header() {
 
   return (
 
-    <header className="shadow p-3 flex items-center justify-between">
+    <header className="border-b p-3 flex items-center justify-between">
       <div className="space-x-3 flex items-center">
         Buscador
       </div>
