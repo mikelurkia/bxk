@@ -1,12 +1,13 @@
-// components/sidebar.tsx
-import { Home, Package, ShoppingCart, Settings, User, Infinity } from "lucide-react";
-import { cn } from "@/lib/utils";
+
+import { Home, Package, ShoppingCart, Settings, User, Infinity, ChevronDown, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getMyPerfil, getMyUser, getSession } from "@/modules/auth/auth.repository";
+import { getMyUser, getSession } from "@/modules/auth/auth.repository";
 import { getMyShop } from "@/modules/shops/shop.repository";
 import LogoutButton from "@/modules/auth/LogoutButton";
-import { ThemeSwitcher } from "../theme-switcher";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "../ui/sidebar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Collapsible } from "radix-ui";
 
 const navItems = [
   { label: "Dashboard", icon: Home, href: "/" },
@@ -14,61 +15,54 @@ const navItems = [
   { label: "Opciones",  icon: Settings, href: "/opciones/tienda" },
 ];
 
-export async function Sidebar() {
+export async function VendorSidebar() {
 
   const session = await getSession();
   const user    = await getMyUser();
   const tienda  = await getMyShop();
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r">
-      {/* Header / Logo */}
-      <div className="p-4 flex items-center space-x-4">
-        <Infinity className="h-6 w-6" />
-        <h2 className="text-xl font-bold tracking-tight">{tienda?.name}</h2>
-      </div>
 
-      {/* Navegación Principal */}
-      <nav className="flex-1 space-y-1 px-1">
-        {navItems.map((item) => (
-          <a href={item.href} key={item.label}>
-            <Button
-              key={item.label}
-              variant="ghost"
-              className="w-full justify-start gap-3"
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Button>
-          </a>
-        ))}
-      </nav>
-
-      {/* Perfil del Vendedor (Anclado al fondo) */}
-      <div className="mt-auto p-2">
-
-        <div className="space-x-3 flex items-center my-2">
-          {tienda && 
-            <a href={process.env.NEXT_PUBLIC_URL}>
-              <Button variant="outline" size="sm">
-                Portal público
-              </Button>
-            </a>
-          }
-          {session && <LogoutButton/>}
-        </div>
-
-        <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors cursor-pointer">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>AO</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-sm font-medium leading-none">{tienda?.name}</span>
-            <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Sidebar collapsible="icon" variant="inset" className="border-r">
+      <SidebarHeader className="flex flex-col items-center gap-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <h3 className="text-xl font-bold tracking-tight">{tienda?.name}</h3>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup />
+        <SidebarMenu>
+          {navItems.map((item) => (
+            <SidebarMenuItem key={item.label}>
+              <SidebarMenuButton asChild>
+                <a href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton className="h-auto">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>AO</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col overflow-hidden">
+                <span className="text-sm font-medium leading-none">{tienda?.name}</span>
+                <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

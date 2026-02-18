@@ -23,10 +23,7 @@ export async function SidebarOpciones() {
       <nav className="flex-1 space-y-1 px-1">
         {navItems.map((item) => (
           <a href={item.href} key={item.label}>
-            <Button
-              key={item.label}
-              variant="ghost"
-              className="w-full justify-start gap-3"
+            <Button key={item.label} variant="ghost" className="w-full justify-start gap-3"
             >
               <item.icon className="h-4 w-4" />
               {item.label}
