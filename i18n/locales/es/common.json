@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "shops": "Tiendas",
+    "dashboard": "Panel de vendedor",
+    "login": "Acceder",
+    "logout": "Cerrar sesión",
+    "language": "Idioma"
+  },
+  "footer": {
+    "copyright": "© {year} Baxauk. Todos los derechos reservados.",
+    "followUs": "Síguenos"
+  },
+  "errors": {
+    "notFound": "Página no encontrada",
+    "pageNotFound": "La página que buscas no existe",
+    "back": "Volver al inicio",
+    "serverError": "Error del servidor",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "loading": "Cargando...",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "save": "Guardar",
+  "edit": "Editar",
+  "create": "Crear",
+  "update": "Actualizar"
+}

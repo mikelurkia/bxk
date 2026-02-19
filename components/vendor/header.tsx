@@ -1,11 +1,6 @@
-import { getSession } from "@/modules/auth/auth.repository";
-import LogoutButton from "@/modules/auth/LogoutButton";
-import { Button } from "@/components/ui/button";
-import { KeyRound, MessageCircleDashed, MessageCircleQuestionMark, Search } from "lucide-react";
-import { getMyShop } from "@/modules/shops/shop.repository";
+import { Search } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { SidebarTrigger } from "../ui/sidebar";
-
+import { LanguageSwitcher } from "../locale-switcher";
 
 export default async function Header() {
 
@@ -17,6 +12,7 @@ export default async function Header() {
         <Search className="h-4 w-4" />
       </div>
       <div className="space-x-3 flex items-center">
+        <LanguageSwitcher />
         <ThemeSwitcher/>
       </div>
     </header>

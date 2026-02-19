@@ -1,23 +1,13 @@
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { PublicShop, Shop } from './shop.schemas';
 
 export async function getPublicShops(): Promise<PublicShop[]> {
   
-  const supabase = await createSupabaseBrowserClient();
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from('shops')
-    .select(`
-      id,
-      name,
-      slug,
-      description,
-      address,
-      phone,
-      whatsapp,
-      instagram
-    `)
+    .select(`id, name, slug, description, address, phone, whatsapp, instagram`)
     .order('name', { ascending: true });
 
   if (error) {
@@ -30,19 +20,11 @@ export async function getPublicShops(): Promise<PublicShop[]> {
 
 export async function getShopPublicBySlug(shopSlug: string): Promise<PublicShop | null> {
   
-  const supabase = await createSupabaseBrowserClient();
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from('shops')
-    .select(`
-      id,
-      name,
-      description,
-      address,
-      phone,
-      whatsapp,
-      instagram
-    `)
+    .select(`id, name, description, address, phone, whatsapp, instagram`)
     .eq('slug', shopSlug).single();
 
   if (error) {

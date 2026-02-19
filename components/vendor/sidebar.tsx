@@ -50,6 +50,9 @@ export async function VendorSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
+            <LogoutButton />
+          </SidebarMenuItem>
+          <SidebarMenuItem>
             <SidebarMenuButton className="h-auto">
               <Avatar className="h-9 w-9">
                 <AvatarImage src="https://github.com/shadcn.png" />

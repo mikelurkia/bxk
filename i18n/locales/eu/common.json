@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "home": "Hasiera",
+    "shops": "Dendak",
+    "dashboard": "Salgilearen panela",
+    "login": "Sartu",
+    "logout": "Saioa amaitu",
+    "language": "Hizkuntza"
+  },
+  "footer": {
+    "copyright": "© {year} Baxauk. Eskubide guztiak gordetakoak.",
+    "followUs": "Jarraitu guri"
+  },
+  "errors": {
+    "notFound": "Orrialde ez da aurkitu",
+    "pageNotFound": "Bilatzen ari zaren orrialdea ez da existitzen",
+    "back": "Hasierara itzuli",
+    "serverError": "Zerbitzariaren errorea",
+    "tryAgain": "Berriro saiatu"
+  },
+  "loading": "Cargatzen...",
+  "cancel": "Utzi",
+  "delete": "Ezabatu",
+  "save": "Gorde",
+  "edit": "Editatu",
+  "create": "Sortu",
+  "update": "Eguneratu"
+}

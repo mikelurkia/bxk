@@ -3,6 +3,7 @@ import LogoutButton from "@/modules/auth/LogoutButton";
 import { Button } from "./ui/button";
 import { KeyRound, MessageCircleQuestionMark } from "lucide-react";
 import { ThemeSwitcher } from "./theme-switcher";
+import { LanguageSwitcher } from "./locale-switcher";
 
 
 export default async function Header() {
@@ -24,6 +25,7 @@ export default async function Header() {
           </Button>
         </a>
         {session && <LogoutButton/>}
+        <LanguageSwitcher />
         <ThemeSwitcher/>
       </div>
 

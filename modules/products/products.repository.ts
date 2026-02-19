@@ -6,14 +6,7 @@ export async function getProductsDashboard(shopId: string): Promise<Product[]> {
 
   const { data, error } = await supabase
     .from('products')
-    .select(`
-      name,
-      description,
-      slug,
-      id,
-      active,
-      created_at
-    `)
+    .select(`name, description, slug, id, active, created_at`)
     .eq('shop_id', shopId);
 
   if (error) throw error;
@@ -26,14 +19,7 @@ export async function getProductDashboardBySlug(shopId: string, productSlug: str
 
   const { data, error } = await supabase
     .from('products')
-    .select(`
-      id,
-      name,
-      description,
-      slug,
-      active,
-      created_at
-    `)
+    .select(`id, name, description, slug, active, created_at`)
     .eq('shop_id', shopId)
     .eq('slug', productSlug)
     .single();
@@ -48,9 +34,7 @@ export async function getProductDashboardById(productoId: string): Promise<Produ
 
   const { data, error } = await supabase
     .from('products')
-    .select(`
-      *
-    `)
+    .select(`*`)
     .eq('id', productoId)
     .single();
 
@@ -64,12 +48,10 @@ export async function getProductsPublic(tiendaId: string): Promise<PublicProduct
 
   const { data, error } = await supabase
     .from('products')
-    .select(`
-      name,
-      description,
-      slug
+    .select(`name, description, slug
     `)
-    .eq('shop_id', tiendaId);
+    .eq('shop_id', tiendaId)
+    .eq('active', true);
 
   if (error) throw error;
 
@@ -82,13 +64,10 @@ export async function getProductPublicBySlug(shopId: string, productSlug: string
 
   const { data, error } = await supabase
     .from('products')
-    .select(`
-      name,
-      description,
-      slug      
-    `)
+    .select(`name, description, slug`)
     .eq('shop_id', shopId)
     .eq('slug', productSlug)
+    .eq('active', true)
     .maybeSingle();
 
   if (error) throw error;

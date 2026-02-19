@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
 import { loginAction } from '@/modules/auth/auth.actions'
 import { AuthInput, authSchema, initialState } from '@/modules/auth/auth.schemas'
 import Form from 'next/form'
-import { useFormStatus } from 'react-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useServerFormAction } from '@/hooks/useServerFormAction'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { useLocale, useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button'
 
 export default function LoginForm() {
 
@@ -27,15 +28,19 @@ export default function LoginForm() {
   // Sincroniza errores del servidor
   syncServerErrors(setError);
 
+  const t = useTranslations('auth');
+  const locale = useLocale();
 
+  console.log('Locale actual:', locale);
+  
   return (
     
     <Card className="w-full max-w-sm">
 
       <CardHeader>
-          <CardTitle>Acceso al portal de vendedores</CardTitle>
+          <CardTitle>{t('login.title')}</CardTitle>
           <p className="text-muted-foreground text-sm">
-            Introduce los datos para acceder a tu cuenta
+            {t('login.description')}
           </p>
       </CardHeader>
 
@@ -43,14 +48,8 @@ export default function LoginForm() {
 
         <Form action={formAction} className="space-y-4">
           
-                <div>
-        <Label className="block text-sm mb-2">Nombre de la tienda</Label>
-        
-
-      </div>
-
           <div className="space-y-1">
-            <Label className="text-sm font-medium">Email</Label>
+            <Label className="text-sm font-medium">{t('login.email')}</Label>
             <Input
               {...register("email")} 
               name="email"
@@ -60,7 +59,7 @@ export default function LoginForm() {
           </div>
           <div className="space-y-1">
             <Label className="text-sm font-medium">
-              Contraseña
+              {t('login.password')}
             </Label>
             <Input
               {...register("password")} 
@@ -81,27 +80,19 @@ export default function LoginForm() {
 
           {state?.success && (
             <p className="text-sm text-green-600">
-              Acceso concedido correctamente
+              {t('login.success')}
             </p>
           )}
 
-          <SubmitButton />
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="block w-full disabled:opacity-50"
+          >
+            {isPending ? t('login.loading') : t('login.submit')}
+          </Button>
         </Form>
       </CardContent>
     </Card>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="rounded bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
-    >
-      {pending ? 'Accediendo…' : 'Acceder'}
-    </button>
   );
 }
