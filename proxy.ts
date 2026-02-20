@@ -8,36 +8,10 @@ const isProd = process.env.NODE_ENV === 'production';
 const intlMiddleware = createMiddleware(
   {...routing,
     localeCookie: {
-      name: 'NEXT_LOCALE_TMP',
+      name: 'NEXT_LOCALE',
       path: '/',
       domain: isProd ? '.vercel.bxk.com' : undefined, // 🔥 clave
       sameSite: 'lax'
-    },
-    pathnames: {
-      
-      '/': '/',
-      'login':'login',
-      '/vendor': {
-        eu: '/saltzailea',
-      },
-      'vendor/opciones': {
-        eu: 'saltzailea/ezarpenak'
-      },
-      'vendor/opciones/tienda': {
-        eu: 'saltzailea/ezarpenak/denda'
-      },
-      'vendor/productos': {
-        eu: 'saltzailea/produktuak'
-      },
-      'public': {
-        eu: 'publikoa'
-      },
-      'public/tienda/[tiendaSlug]': {
-        eu: 'publikoa/denda/[tiendaSlug]'
-      },
-      'public/tienda/[tiendaSlug]/producto/[productoSlug]': {
-        eu: 'publikoa/denda/[tiendaSlug]/produktua/[productoSlug]'
-      }
     }
   });
 
@@ -45,16 +19,21 @@ export async function proxy(request: NextRequest) {
 
   const response = intlMiddleware(request);
   
-  // Si next-intl ya ha decidido redirigir (ej: "/" → "/es") devolvemos esa respuesta inmediatamente
-  if (response.headers.get('location')) {
+  // 2. Si ya hay redirección, devolverla
+  if (response.headers.get("location")) {
     return response;
   }
 
+  // 3. Proteger rutas según subdominio y autenticación
   const hostname = request.headers.get("host") || "";
-  const url = request.nextUrl.clone();
-  const isSellerSubdomain = hostname.startsWith("app.");
-  const isRouteProtected  = hostname.startsWith("app.");
-  const pathname = url.pathname;
+  const pathname = request.nextUrl.pathname;
+  const isAdminSubdomain = hostname.startsWith("admin.");
+  const isVendorSubdomain = hostname.startsWith("app.");
+
+  console.log("Hostname:", hostname);
+  console.log("Pathname:", pathname);
+  console.log("Is Admin Subdomain:", isAdminSubdomain);
+  console.log("Is Vendor Subdomain:", isVendorSubdomain);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -80,106 +59,31 @@ export async function proxy(request: NextRequest) {
   
   // This refreshes the token if needed
   const { data: { user } } = await supabase.auth.getUser(); 
-  // Extrae la parte de la ruta sin el locale 
-  const pathWithoutLocale = pathname.slice(3); // Elimina /{locale}
 
-  if ((isRouteProtected && !user) || url.pathname.startsWith("/login")) {
-    return NextResponse.rewrite(
-      new URL(process.env.NEXT_PUBLIC_URL + `/${routing.defaultLocale}/login`, request.url),
-      {headers: response.headers}
-    );
+  // Rutas públicas
+  const isPublicRoute = pathname.match(/\/(es|eu)\/?(login)?$/);
+
+  // Si no hay usuario y está en ruta protegida
+  if ((isVendorSubdomain || isAdminSubdomain) && !user) {
+    const locale = pathname.split("/")[1];
+    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
-  // Si es subdominio de seller → reescribir a carpeta (seller)
-  if (isSellerSubdomain) {
-    return NextResponse.rewrite(
-      new URL(process.env.NEXT_PUBLIC_URL + `/${routing.defaultLocale}/vendor${pathWithoutLocale}`, request.url),
-      {headers: response.headers}
-    );
-  }
-  else {
+  // Validar rol para admin
+  if (isAdminSubdomain && user) {
 
-    return NextResponse.rewrite(
-      new URL(`/${routing.defaultLocale}/public${pathWithoutLocale}`, request.url),
-      {headers: response.headers}
-    );
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
 
+    if (profile?.role !== "admin") {
+      const locale = pathname.split("/")[1];
+      return NextResponse.redirect(
+        new URL(`/${locale}`, request.url)
+      );
+    }
   }
 
+  return response;
 }
-
-/*
-
-export async function proxy(req: NextRequest) {
-
-// Step 1: Use the incoming request (example)
-  const defaultLocale = req.headers.get('NEXT_LOCALE') || 'eu';
- 
-  // Step 2: Create and call the next-intl middleware (example)
-  const handleI18nRouting = createMiddleware({
-    locales: ['es', 'eu'],
-    defaultLocale: defaultLocale as any
-  });
-  
-  let res = handleI18nRouting(req);
- 
-  // Step 3: Alter the response (example)
-  res.headers.set('NEXT_LOCALE', defaultLocale);
-  
-  const hostname = req.headers.get("host") || "";
-  const url = req.nextUrl.clone();
-  const isSellerSubdomain = hostname.startsWith("app.");
-  const pathname = url.pathname;
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!,
-    {
-      cookies: {
-        get(name) { return req.cookies.get(name)?.value },
-        set(name, value, options) {
-          // Update the request cookies so subsequent checks see them
-          req.cookies.set({ name, value, ...options });
-          // Update the response cookies so the browser gets them
-          res = NextResponse.next({ request: req });
-          res.cookies.set({ name, value, ...options, domain: '.localhost' });
-        },
-        remove(name, options) {
-          req.cookies.set({ name, value: '', ...options });
-          res = NextResponse.next({ request: req });
-          res.cookies.set({ name, value: '', ...options, domain: '.localhost' });
-        },
-      },
-    }
-  )
-  
-  console.log("Locale:", defaultLocale);
-
-  // This refreshes the token if needed
-  const { data: { user } } = await supabase.auth.getUser(); 
-  
-  // Extrae la parte de la ruta sin el locale
-  // Ej: /es/tienda/foo → /tienda/foo
-  const pathWithoutLocale = pathname.slice(3); // Elimina /{locale}
-
-  if (isSellerSubdomain) {
-
-    // Si no hay sesión → redirigir a login del seller
-    if (!user || url.pathname.startsWith("/login")) {
-      url.pathname = `/${defaultLocale}/login`
-      return NextResponse.rewrite(process.env.NEXT_PUBLIC_URL + url.pathname)
-    }
-
-    // Reescribir a carpeta (seller)
-    url.pathname = `/${defaultLocale}/vendor${pathWithoutLocale}`
-    return NextResponse.rewrite(url)
-  }
-
-  // PORTAL PÚBLICO
-  url.pathname = `/${defaultLocale}/public${pathWithoutLocale}`;
-  return NextResponse.rewrite(url)
-
-}*/
 
 export const config = {
    matcher: [
