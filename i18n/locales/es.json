@@ -1,0 +1,25 @@
+{
+  "Auth":{
+    "login": {
+      "title": "Acceso al portal de vendedores",
+      "description": "Introduce los datos para acceder a tu cuenta",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Acceder",
+      "loading": "Accediendo…",
+      "success": "Acceso concedido correctamente",
+      "error": {
+        "credentials": "Credenciales inválidas"
+      }
+    },
+    "validation": {
+      "emailRequired": "El email es obligatorio",
+      "emailInvalid": "Introduce un email válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordMinLength": "La contraseña debe tener al menos 4 caracteres",
+      "error": {
+        "validation": "Error de validación"
+      }
+    }
+  }
+}

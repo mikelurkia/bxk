@@ -3,7 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { locales } from "@/i18n/config";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { NextIntlClientProvider } from "next-intl";
+import { hasLocale, NextIntlClientProvider, useMessages } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,21 +35,19 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }) {
 
-  const { locale } = await params;
-    
-  // Enable static rendering
-  setRequestLocale(locale);
-
+  const requestedLocale = (await params).locale;
   const messages = await getMessages();
 
   return (
-    <html lang="es">
+    <html lang={requestedLocale} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground flex flex-col">
-        <NextIntlClientProvider messages={messages}>
-          <main className="mx-auto p-4 flex-1 flex-grow gap-6 w-full max-w-5xl">
-            {children}
-          </main>
-        </NextIntlClientProvider>
+        <ThemeProvider  attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <NextIntlClientProvider messages={messages}>
+            <main className="mx-auto p-4 flex-1 flex-grow gap-6 w-full max-w-5xl">
+              {children}
+            </main>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -9,8 +9,9 @@ import { useForm } from 'react-hook-form'
 import { useServerFormAction } from '@/hooks/useServerFormAction'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
+import { LanguageSwitcher } from '@/components/locale-switcher'
 
 export default function LoginForm() {
 
@@ -22,26 +23,32 @@ export default function LoginForm() {
   const {state, formAction, isPending, syncServerErrors } = useServerFormAction(
     loginAction,
     initialState,
-    () => reset() // Se ejecuta cuando el servidor responde success: true
+    () => {
+      if (state?.inputs) {
+        reset(state.inputs as AuthInput)
+      }
+    }
   );
 
   // Sincroniza errores del servidor
   syncServerErrors(setError);
 
-  const t = useTranslations('auth');
-  const locale = useLocale();
-
-  console.log('Locale actual:', locale);
+  const t = useTranslations('Auth');
   
   return (
     
     <Card className="w-full max-w-sm">
 
       <CardHeader>
-          <CardTitle>{t('login.title')}</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>{t('login.title')}</CardTitle>
+            <LanguageSwitcher />
+          </div>
+          
           <p className="text-muted-foreground text-sm">
             {t('login.description')}
           </p>
+          
       </CardHeader>
 
       <CardContent className="space-y-4">

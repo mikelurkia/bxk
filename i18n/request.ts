@@ -1,29 +1,11 @@
-import { getRequestConfig } from 'next-intl/server';
-import { locales, defaultLocale, Locale } from './config';
-
-// Namespaces disponibles
-const namespaces = ['common', 'auth'/*, 'products', 'shops', 'home'*/] as const;
-
-export default getRequestConfig(async ({ locale }) => {
-  let resolvedLocale: string =
-    locale && locales.includes(locale as Locale) ? locale : defaultLocale;
-
-  // ✅ Cargar dinámicamente todos los namespaces
-  const messages: Record<string, any> = {};
-
-  for (const namespace of namespaces) {
-    try {
-      const imported = await import(
-        `./locales/${resolvedLocale}/${namespace}.json`
-      );
-      messages[namespace === 'common' ? 'default' : namespace] = imported.default;
-    } catch (error) {
-      console.warn(`No se pudo cargar ${namespace} para ${resolvedLocale}`);
-    }
-  }
-
-  return {
-    messages,
-    locale: resolvedLocale,
-  };
+import {getRequestConfig} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
+import {routing} from './routing';
+ 
+export default getRequestConfig(async ({requestLocale}) => {
+  
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
+ 
+  return { locale, messages: (await import(`./locales/${locale}.json`)).default };
 });

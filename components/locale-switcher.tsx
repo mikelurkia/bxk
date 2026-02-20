@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Globe } from 'lucide-react';
+import { Globe2 } from 'lucide-react';
 import { locales, localeNames, type Locale } from '@/i18n/config';
 
 export function LanguageSwitcher() {
@@ -26,16 +26,16 @@ export function LanguageSwitcher() {
     } else {
       segments.unshift(newLocale);
     }
-
     const newPathname = segments.join('/');
     router.push(newPathname);
+    router.refresh();
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
-          <Globe className="h-[1.2rem] w-[1.2rem]" />
+          <Globe2 className="h-[1.2rem] w-[1.2rem]" />
           <span className="sr-only">Cambiar idioma</span>
         </Button>
       </DropdownMenuTrigger>

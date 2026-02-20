@@ -4,9 +4,8 @@ import "@/app/globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider"
-import { locales } from "@/i18n/config";
-import { getMessages, setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,10 +22,6 @@ export const metadata: Metadata = {
   description: "Baxauk dendan?",
 };
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
-  
 export default async function RootLayout({
   children,
   params
@@ -35,15 +30,11 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }) {
 
-  const { locale } = await params;
-  
-  // Enable static rendering
-  setRequestLocale(locale);
-
+  const requestedLocale = (await params).locale;
   const messages = await getMessages();
   
   return (
-    <html lang={locale} suppressHydrationWarning >
+    <html lang={requestedLocale} suppressHydrationWarning >
       <body className="min-h-screen bg-background text-foreground flex flex-col">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider  attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

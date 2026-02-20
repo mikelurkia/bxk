@@ -49,7 +49,7 @@ export function ProductUpdateForm({ product }: Props) {
         <Input
           {...register("name")} 
           name="name" // Importante: debe coincidir con el name de la Action
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
 
@@ -60,7 +60,7 @@ export function ProductUpdateForm({ product }: Props) {
         <Textarea 
           {...register("description")} 
           name="description"
-          className="border p-2 w-full text-black" 
+          className="border p-2 w-full" 
         />
         {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
       </div>

@@ -37,9 +37,9 @@ export default async function ProductoPage({ params, }: Props) {
       {/* Layout principal */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Columna izquierda */}
-        <ProductDatosCard>
+        <div className='border rounded p-4'>
           <ProductUpdateForm product={product} />
-        </ProductDatosCard>
+        </div>
 
         {/* Columna derecha */}
         <div className="lg:col-span-1">

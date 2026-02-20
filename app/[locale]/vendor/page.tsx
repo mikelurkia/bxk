@@ -30,7 +30,6 @@ export default async function DashboardPage() {
             Gestión de <strong>{tienda.name}</strong>
           </p>
         </div>
-        <a href="/tienda"><Button>Editar</Button></a>
       </header>
 
       <section className="rounded border p-4">

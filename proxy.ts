@@ -1,54 +1,135 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr';
 import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale } from './i18n/config';
+import { NextRequest, NextResponse } from 'next/server';
+import { routing } from './i18n/routing';
+ 
+const isProd = process.env.NODE_ENV === 'production';
 
-// Extrae el locale de la ruta (ej: /es/tienda/foo → 'es')
-function getLocaleFromPath(pathname: string): string | null {
-  const segments = pathname.split('/').filter(Boolean);
-  if (locales.includes(segments[0] as any)) {
-    return segments[0];
+const intlMiddleware = createMiddleware(
+  {...routing,
+    localeCookie: {
+      name: 'NEXT_LOCALE_TMP',
+      path: '/',
+      domain: isProd ? '.vercel.bxk.com' : undefined, // 🔥 clave
+      sameSite: 'lax'
+    },
+    pathnames: {
+      
+      '/': '/',
+      'login':'login',
+      '/vendor': {
+        eu: '/saltzailea',
+      },
+      'vendor/opciones': {
+        eu: 'saltzailea/ezarpenak'
+      },
+      'vendor/opciones/tienda': {
+        eu: 'saltzailea/ezarpenak/denda'
+      },
+      'vendor/productos': {
+        eu: 'saltzailea/produktuak'
+      },
+      'public': {
+        eu: 'publikoa'
+      },
+      'public/tienda/[tiendaSlug]': {
+        eu: 'publikoa/denda/[tiendaSlug]'
+      },
+      'public/tienda/[tiendaSlug]/producto/[productoSlug]': {
+        eu: 'publikoa/denda/[tiendaSlug]/produktua/[productoSlug]'
+      }
+    }
+  });
+
+export async function proxy(request: NextRequest) {
+
+  const response = intlMiddleware(request);
+  
+  // Si next-intl ya ha decidido redirigir (ej: "/" → "/es") devolvemos esa respuesta inmediatamente
+  if (response.headers.get('location')) {
+    return response;
   }
-  return null;
+
+  const hostname = request.headers.get("host") || "";
+  const url = request.nextUrl.clone();
+  const isSellerSubdomain = hostname.startsWith("app.");
+  const isRouteProtected  = hostname.startsWith("app.");
+  const pathname = url.pathname;
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!,
+    {
+      cookies: {
+        get(name) { return request.cookies.get(name)?.value },
+        set(name, value, options) {
+          // Update the request cookies so subsequent checks see them
+          request.cookies.set({ name, value, ...options });
+          // Update the response cookies so the browser gets them
+          let res = NextResponse.next({ request: request });
+          res.cookies.set({ name, value, ...options, domain: '.localhost' });
+        },
+        remove(name, options) {
+          request.cookies.set({ name, value: '', ...options });
+          let res = NextResponse.next({ request: request });
+          res.cookies.set({ name, value: '', ...options, domain: '.localhost' });
+        },
+      },
+    }
+  )
+  
+  // This refreshes the token if needed
+  const { data: { user } } = await supabase.auth.getUser(); 
+  // Extrae la parte de la ruta sin el locale 
+  const pathWithoutLocale = pathname.slice(3); // Elimina /{locale}
+
+  if ((isRouteProtected && !user) || url.pathname.startsWith("/login")) {
+    return NextResponse.rewrite(
+      new URL(process.env.NEXT_PUBLIC_URL + `/${routing.defaultLocale}/login`, request.url),
+      {headers: response.headers}
+    );
+  }
+
+  // Si es subdominio de seller → reescribir a carpeta (seller)
+  if (isSellerSubdomain) {
+    return NextResponse.rewrite(
+      new URL(process.env.NEXT_PUBLIC_URL + `/${routing.defaultLocale}/vendor${pathWithoutLocale}`, request.url),
+      {headers: response.headers}
+    );
+  }
+  else {
+
+    return NextResponse.rewrite(
+      new URL(`/${routing.defaultLocale}/public${pathWithoutLocale}`, request.url),
+      {headers: response.headers}
+    );
+
+  }
+
 }
 
-// Detecta idioma preferido del navegador
-function detectLocaleFromHeader(req: NextRequest): string {
-  const acceptLang = req.headers.get('accept-language') || '';
-  
-  // Prioridad: EU > ES > Default
-  if (acceptLang.toLowerCase().includes('eu')) return 'eu';
-  if (acceptLang.toLowerCase().includes('es')) return 'es';
-  
-  return defaultLocale;
-}
+/*
 
 export async function proxy(req: NextRequest) {
 
-  let res = NextResponse.next({
-    request: {
-      headers: req.headers,
-    },
+// Step 1: Use the incoming request (example)
+  const defaultLocale = req.headers.get('NEXT_LOCALE') || 'eu';
+ 
+  // Step 2: Create and call the next-intl middleware (example)
+  const handleI18nRouting = createMiddleware({
+    locales: ['es', 'eu'],
+    defaultLocale: defaultLocale as any
   });
+  
+  let res = handleI18nRouting(req);
+ 
+  // Step 3: Alter the response (example)
+  res.headers.set('NEXT_LOCALE', defaultLocale);
   
   const hostname = req.headers.get("host") || "";
   const url = req.nextUrl.clone();
   const isSellerSubdomain = hostname.startsWith("app.");
   const pathname = url.pathname;
-
-  let locale = getLocaleFromPath(pathname);
-
-  console.log('Pathname detectado:', pathname);
-  console.log('Locale detectado en la ruta:', locale);
-  
-  if (!locale) {
-    // Si no hay locale en la ruta → redirigir a versión localizada
-    const detectedLocale = detectLocaleFromHeader(req);
-    const newPathname = `/${detectedLocale}${pathname === '/' ? '' : pathname}`;
-    url.pathname = newPathname;
-    return NextResponse.redirect(url);
-  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -72,6 +153,8 @@ export async function proxy(req: NextRequest) {
     }
   )
   
+  console.log("Locale:", defaultLocale);
+
   // This refreshes the token if needed
   const { data: { user } } = await supabase.auth.getUser(); 
   
@@ -83,21 +166,25 @@ export async function proxy(req: NextRequest) {
 
     // Si no hay sesión → redirigir a login del seller
     if (!user || url.pathname.startsWith("/login")) {
-      url.pathname = `/${locale}/login`
+      url.pathname = `/${defaultLocale}/login`
       return NextResponse.rewrite(process.env.NEXT_PUBLIC_URL + url.pathname)
     }
 
     // Reescribir a carpeta (seller)
-    url.pathname = `/${locale}/vendor${pathWithoutLocale}`
+    url.pathname = `/${defaultLocale}/vendor${pathWithoutLocale}`
     return NextResponse.rewrite(url)
   }
 
   // PORTAL PÚBLICO
-  url.pathname = `/${locale}/public${pathWithoutLocale}`;
+  url.pathname = `/${defaultLocale}/public${pathWithoutLocale}`;
   return NextResponse.rewrite(url)
 
-}
+}*/
 
 export const config = {
-   matcher: ['/((?!_next|_vercel|favicon.ico|.well-known|api/.*|.*\\..*|robots\\.txt|sitemap\\.xml).*)'],
+   matcher: [
+    '/',
+    '/(es|eu)/:path*',
+    '/((?!api|_next|.*\\..*).*)'
+  ]
 }

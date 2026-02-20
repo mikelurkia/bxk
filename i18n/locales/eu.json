@@ -1,0 +1,25 @@
+{
+  "Auth": {
+    "login": {
+      "title": "Portal sarrera",
+      "description": "Sartu zure kontuaren datuak",
+      "email": "Email",
+      "password": "Pasahitza",
+      "submit": "Sartu",
+      "loading": "Sartzen…",
+      "success": "Sarrera baieztatua",
+      "error": {
+        "credentials": "Kredentzial okerrak"
+      }
+    },
+    "validation": {
+      "emailRequired": "Emaila nahitaezkoa da",
+      "emailInvalid": "Sartu baliozko emaila",
+      "passwordRequired": "Pasahitza nahitaezkoa da",
+      "passwordMinLength": "Pasahitzak gutxienez 4 karaktere izan behar ditu",
+      "error": {
+        "validation": "Balioztatze errorea"
+      }
+    }
+  }
+}

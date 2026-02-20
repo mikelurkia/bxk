@@ -4,6 +4,8 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { authSchema, FormState } from './auth.schemas';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+
 
 export async function logoutAction() {
   const supabase = await createSupabaseServerClient();
@@ -13,7 +15,8 @@ export async function logoutAction() {
 }
 
 export async function loginAction(_: any, formData: FormData): Promise<FormState> {
-  
+
+  const t = await getTranslations('Auth');
   const supabase = await createSupabaseServerClient();
 
   const rawData = {
@@ -26,7 +29,7 @@ export async function loginAction(_: any, formData: FormData): Promise<FormState
   if (!validatedFields.success) {
     return {
       success: false,
-      message: "Error de validación",
+      message: t('login.validation.error.validation'),
       errors: validatedFields.error.flatten().fieldErrors,
       inputs: rawData as any, // Devolvemos lo que escribió el usuario
     };
@@ -40,14 +43,12 @@ export async function loginAction(_: any, formData: FormData): Promise<FormState
   if (error) {
     return {
       success: false,
-      message: "Error de validación",
-      errors: { general: ['Credenciales inválidas'] },
+      message: t('login.error.credentials'),
+      errors: { general: [t('login.error.credentials')] },
       inputs: rawData as any, // Devolvemos lo que escribió el usuario
     };
   }
-
-  console.log("Login exitoso, revalidando path...");
-
+  
   revalidatePath("/", "layout")
   redirect('/');
 
